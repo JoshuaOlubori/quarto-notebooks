@@ -1,0 +1,478 @@
+---
+title: "Data Security with Python"
+execute: 
+  
+  eval: false
+format: html
+toc: true
+---
+
+## Task 1
+
+Assuming that a user enters a password e.g. Test1234, apply a password validation for a user input to login. The password should include capital and lowercase letters, a number and 8 to 12 characters. The password should have at least 2 capital or lowercase letters. The password should not include any spaces.
+
+### Introduction
+
+Protecting user data in an online hotel booking system is paramount, and robust password validation is critical to achieve this. By adhering to specific criteria when crafting passwords, users can significantly minimize security vulnerabilities. This includes a mix of uppercase and lowercase letters, at least one number, a defined length range, a requirement for a minimum number of uppercase or lowercase letters, and an exclusion of spaces. In this demonstration, I will implement Python scripts to showcase password validation based on these criteria.
+
+> The password must contain capital and lowercase letters, a number and 8 to 12 characters.
+>
+> The password should have at least 2 capital or lowercase letters.
+>
+> The password should not include any spaces.
+
+### Implementation
+
+```{python}
+import re
+
+
+class PasswordValidator:
+    def __init__(self, password):
+        self.password = password
+
+    def validate_password(self):
+
+        if not 8 <= len(self.password) <= 12:
+            return 1
+
+        lowercase_count = len(re.findall(r'[a-z]', self.password))
+        uppercase_count = len(re.findall(r'[A-Z]', self.password))
+        if lowercase_count < 1 or uppercase_count < 1:
+            return 2
+
+        if not any(char.isdigit() for char in self.password):
+            return 3
+
+        if ' ' in self.password:
+            return 4
+
+        return 0
+
+
+user_password = "lloveRice88"
+
+
+validator = PasswordValidator(user_password)
+
+if validator.validate_password() == 0:
+    print("Password is valid.")
+else:
+    print("Password does not meet the criteria.")
+    if validator.validate_password() == 1:
+        print("Password must be between 8 and 12 characters long.")
+    elif validator.validate_password() == 2:
+        print("Password must contain both capital and lowercase letters, and at least 2 letters in general")
+    if validator.validate_password() == 3:
+        print("Password must contain at least 1 number.")
+    if validator.validate_password() == 4:
+        print("Password must not contain a space character")
+```
+
+### Code Report
+
+This implementation defines a `PasswordValidator` class, which validates user passwords based on the aforementioned criteria.
+
+**1. Class Definition:**
+
+**PasswordValidator Class:**
+
+-   `__init__(self, password)`: Initialises a PasswordValidator object with a password provided by the user.
+-   `validate_password(self)`: Validates the password against defined criteria, including length, uppercase/lowercase letters, numeric digits, and the absence of spaces.
+
+**2. Password Validation:**
+
+**Length Check:**
+
+```{python}
+ if not 8 <= len(self.password) <= 12:
+    return 1 
+```
+
+This code snippet checks if the password length is between 8 and 12 characters.
+
+**Letter Count Check:**
+
+```{python}
+ lowercase_count = len(re.findall(r'[a-z]', self.password))
+ uppercase_count = len(re.findall(r'[A-Z]', self.password))
+ if lowercase_count < 1 or uppercase_count < 1:
+     return 2
+```
+
+This lines checks that there are both uppercase and lowercase letters in the password, and at least 2 letters in the password in general.
+
+**Number Check:**
+
+```{python}
+if not any(char.isdigit() for char in self.password):
+    return 3
+```
+
+This snippet checks that the password contains at least one number.
+
+**Space Check:**
+
+```{python}
+ if ' ' in self.password:
+     return 4
+```
+
+These line ensures there are no spaces in the password.
+
+**3. Code Demonstration:**
+
+**Password Initialization:** - An instance of the `PasswordValidator` class (`validator`) is created with the example password "IloveRice88" at line 27 of the code.
+
+**Validation Check:** - Lines 30 downward demonstrates the validation of the password, using the output of the `validate_password()` method to print appropriate error messages.
+
+**4. Security Considerations:**
+
+-   The code enforces various password complexity requirements to enhance security.
+
+-   Regular expressions are utilized for efficient pattern matching.
+
+**5. Recommendations:**
+
+-   Provide informative error messages specifying which criteria the password fails to meet.
+
+-   Implement additional checks for special characters or other specific requirements.
+
+## Task 2
+
+Assuming that a user enters a username e.g. admin and a password Test1234, apply a password encryption and decryption strategy.
+
+-   Demonstrate an encryption-decryption use case for user name and password.
+
+-   Demonstrate an example of successful and unsuccessful login using any data input that you prefer.
+
+### Introduction
+
+The solution shows how Python can be used to implement secured user authentication through password encryption and verification using the **bcrypt** library (Manoj, 2023). The script defines a `User` class that encapsulates user information, including the username and a securely hashed password. This design choice prioritizes data security, as sensitive user credentials are protected against common vulnerabilities.
+
+### Implementation
+
+```{python}
+import bcrypt
+
+
+class User:
+    def __init__(self, username, password):
+        self.username = username
+        self.password = self.encrypt_password(password)
+
+    def encrypt_password(self, password):
+        hashed_password = bcrypt.hashpw(
+            password.encode('utf-8'), bcrypt.gensalt())
+        return hashed_password
+
+    def check_password(self, input_password):
+        return bcrypt.checkpw(input_password.encode('utf-8'), self.password)
+
+
+# User registration
+user = User("Biden", "Ilovepotatoes88")
+
+# Successful login attempt
+input_password_success = "Ilovepotatoes88"
+if user.check_password(input_password_success):
+    print("Login successful!")
+else:
+    print("Login failed.")
+
+# Unsuccessful login attempt
+input_password_fail = "notmypassword"
+if user.check_password(input_password_fail):
+    print("Login successful!")
+else:
+    print("Login failed.")
+```
+
+### Code Report
+
+The provided code demonstrates a simple implementation of password encryption and user authentication using the `bcrypt` library in Python. Below is a detailed report on the code:
+
+**1. Class Definition:**
+
+**User Class:**
+
+`__init__(self, username, password)`: This Initializes a `User` object with a username and encrypted password using the `encrypt_password` method.
+
+`encrypt_password(self, password)`: Hashes the given password using the **bcrypt** library.
+
+`check_password(self, input_password)`: Compares the input password with the stored hashed password for authentication.
+
+**2. Example Usage:**
+
+**User Registration:** An instance of the `User` class (`user`) is created with the username "Biden" and the password "Ilovepotatoes88". The password is automatically encrypted during initialization.
+
+```{python}
+user = User("Biden",  "Ilovepotatoes88")
+```
+
+-   **Successful Login:**
+
+    -   Demonstrates a successful login attempt using the correct password ("Ilovepotatoes88").
+
+    ```{python}
+    input_password_success = "Ilovepotatoes88"
+    if user.check_password(input_password_success):
+        print("Login successful!")
+    else:
+        print("Login failed.")
+    ```
+
+-   **Unsuccessful Login:**
+
+    -   Demonstrates an unsuccessful login attempt using an incorrect password ("notmypassword"). In this case, the `else` branch of the conditional logic will activate and the login will fail
+
+    ```{python}
+    input_password_fail = "notmypassword"
+    if user.check_password(input_password_fail):
+        print("Login successful!")
+    else:
+        print("Login failed.")
+    ```
+
+**3. Security Considerations:**
+
+-   The code enhances security by storing and comparing hashed passwords using **bcrypt**, a strong cryptographic hashing algorithm.
+
+-   The use of **bcrypt** and salting mitigates common password vulnerabilities.
+
+**4. Recommendations:**
+
+-   Proper handling of exceptions related to **bcrypt** operations, such as `ValueError` for improperly formatted passwords can be ensured.
+
+-   The use of strong, unique passwords should be ensured by implementing password policies.
+
+-   A user registration system with proper validation of usernames and additional user information should be implemented.
+
+-   Error handling can be expanded for other scenarios, such as non-existent users or database connectivity issues.
+
+## Task 3
+
+Implement a multifactor authentication case using Python.
+
+Demonstrate the use of a multifactor authentication case in Python. For this example you will need to change the period interval to 25 seconds.
+
+Generate the following set of events in Python:
+
+1.  Simulate a new one time pin.
+
+2.  Then verify the user.
+
+3.  Then wait for 30 seconds
+
+4.  Then verify once more.
+
+### Introduction
+
+For the online hotel booking system, implementing multifactor authentication (MFA) using Python with the PyOTP library enhances the security of user accounts. In this design, I will simulate a scenario where a user generates a one-time PIN (OTP), verifies the user with the generated OTP, waits for a specified interval, and then verifies the user once more.
+
+### Implementation
+
+```{python}
+import pyotp
+import time
+
+
+class HotelBookingSystem:
+    def __init__(self, user_secret_key):
+        self.user_secret_key = user_secret_key
+        self.otp_generator = pyotp.TOTP(self.user_secret_key, interval=25)
+
+    def generate_otp(self):
+        return self.otp_generator.now()
+
+    def verify_user(self, user_input_otp):
+        return self.otp_generator.verify(user_input_otp)
+
+
+user_secret_key = pyotp.random_base32()
+hotel_system = HotelBookingSystem(user_secret_key)
+
+# Simulate a one-time PIN
+generated_otp = hotel_system.generate_otp()
+print(f"Generated OTP: {generated_otp}")
+
+# Verify the user
+user_input_otp = input("Enter your OTP for verification: ")
+if hotel_system.verify_user(user_input_otp):
+    print("User verified successfully.")
+else:
+    print("User verification failed.")
+
+# Wait for 30 seconds
+time.sleep(30)
+
+
+# Verifying again
+if hotel_system.verify_user(user_input_otp):
+    print("User verified successfully after waiting.")
+else:
+    print("User verification failed after waiting.")
+
+```
+
+### Code Report
+
+The above code exemplifies a Python implementation of multifactor authentication using the PyOTP library within the context of an online hotel booking system. Here is a detailed report on the code:
+
+**1. Class Definition:**
+
+**HotelBookingSystem Class:**
+
+-   `__init__(self, user_secret_key)`: This Initialises a `HotelBookingSystem` python object with a user's secret key and a TOTP generator with a 25-second interval, the **timestep**, that is, the amount of time duration for which the OTP is valid (Khrishna, 2023).
+
+-   `generate_otp(self)`: This method generates a new one-time PIN (OTP) using the TOTP generator.
+
+-   `verify_user(self, user_input_otp)`: Verifies the user-entered OTP using the TOTP generator.
+
+**2. Security Aspects:**
+
+-   The code utilizes PyOTP, a secure, well-used library implementing Time-based One-Time Passwords (TOTP).
+
+-   A user's secret key is kept private for secure generation and verification of OTPs.
+
+**3. Example Usage:**
+
+A random secret key is generated for a user, and a `HotelBookingSystem` instance is created.
+
+Simulates the generation of a new OTP, verifies the user, waits for 30 seconds, and verifies the user again.
+
+**4. Multifactor Authentication Workflow:**
+
+**OTP Generation:**
+
+``` python
+user_secret_key = pyotp.random_base32()
+hotel_system = HotelBookingSystem(user_secret_key)
+
+generated_otp = hotel_system.generate_otp()
+print(f"Generated OTP: {generated_otp}")
+```
+
+Lines 17 to 22 demonstrates the generation of a new OTP for the user.
+
+-   **User Verification:**
+
+    -   The code prompts the user to enter the OTP for verification and provides feedback on the success or failure of the verification.
+
+    ``` python
+    user_input_otp = input("Enter your OTP for verification: ")
+    if hotel_system.verify_user(user_input_otp):
+        print("User verified successfully.")
+    else:
+        print("User verification failed.")
+    ```
+
+-   **Wait for 30 Seconds:**
+
+    -   The script pauses for 30 seconds using the **time** native Python package to simulate the passage of time.
+
+    ``` python
+    time.sleep(30)
+    ```
+
+-   **User Verification After Waiting:**
+
+    -   Finally, the code prompts the user to enter their OTP again for verification after the waiting period.
+
+    ``` py
+    user_input_otp_after_wait = input("Enter the OTP to verify the user again: ")
+    if hotel_system.verify_user(user_input_otp_after_wait):
+        print("User verified successfully after waiting.")
+    else:
+        print("User verification failed after waiting.")
+    ```
+
+Because the wait period (30 seconds) is longer than the [**timestep**]{.underline} (25 seconds), the OTP becomes expired and the user verification will fail.
+
+**5. Recommendations:**
+
+Error handling could be implemented for potential issues during OTP generation or user verification.
+
+### Workflow
+
+```{mermaid}
+graph TD
+A(User requests authentication) --> B(Hotel System generates OTP and sends to user)
+B --> C(User receives OTP)
+C --> D(User enters OTP)
+D --> E{Hotel System verifies OTP}
+E --> F(User verified successfully)
+E --> G(User verification failed)
+F -- 30 seconds wait --> H(Hotel System verifies OTP again)
+H --> I(Inevitable verification failure)
+```
+
+### References
+
+Manoj, D. (2023) Bcrypt: *Safeguarding Users’ Passwords in Python*. Available at: [https://medium.com/\@HeCanThink/bcrypt-safeguarding-users-passwords-in-python-fd8400bdd03](https://medium.com/@HeCanThink/bcrypt-safeguarding-users-passwords-in-python-fd8400bdd03) (Accessed: 8 Dec 2023).
+
+Krishna, A. (2023) *How To Generate OTPs Using PyOTP in Python*. Available at: <https://blog.ashutoshkrris.in/how-to-generate-otps-using-pyotp-in-python> (Accessed: 8 Dec 2023)
+
+# How can ISO 27001 and PCI DSS support the use of data security for modern IT companies?
+
+## ISO 27001
+
+ISO 27001, the premier international standard for information security, is a comprehensive framework published by the International Organization for Standardization (ISO) in collaboration with the International Electrotechnical Commission (IEC). Officially titled “ISO/IEC 27001 – Information security, cybersecurity, and privacy protection — Information security management systems — Requirements,” it serves as a guide for companies seeking to safeguard their critical information. The standard also offers a certification process to qualified organisations. Achieving ISO 27001 certification enables a company to demonstrate to customers and partners that it is dedicated to ensuring the security of their data (ISO and IEC, 2022).
+
+According to Ma *et al*. (2008), the fundamental objective of an Information Security Management System (ISMS) is to safeguard three vital aspects of information: confidentiality, integrity, and availability. The standard involves identifying risks through risk assessment and subsequently defining measures for risk mitigation or treatment. The primary focus is on managing risks systematically—locating vulnerabilities and implementing security controls or safeguards to prevent incidents. The implementation of ISO 27001 involves adhering to a set of controls detailed in annexes within the standard.
+
+## PCI DSS
+
+PCI DSS, or the Payment Card Industry Data Security Standard, is a set of security standards specifically designed for organizations engaged in payment card transactions. Formulated through collaboration among major credit card companies, PCI DSS aims to establish a foundational set of security requirements for the protection of cardholder data. PCI DSS comprises twelve high-level requirements addressing network security, access control, and regular monitoring and it is applicable to entities involved in storing, processing, or transmitting credit card information. The standard places a strong emphasis on securing payment transactions and preventing unauthorized access or breaches of cardholder data (Calder and Geraint, 2013). Notably, PCI DSS advocates for measures like point-to-point encryption to ensure integrity and confidentiality of sensitive financial information.
+
+## Application of ISO 27001 and PCI DSS in the POS Credit Card Processing Scenario (Standalone Credit Card Terminals)
+
+Standalone credit card terminals are a staple of modern retail transactions. However, they present a potential security risk to payment card data and hence necessitate effective protective measures. ISO 27001 and PCI DSS offer robust solutions to address these concerns, ensuring the security of payment card data in such environments.
+
+ISO 27001 promotes regular risk assessments, implementation of security controls, and monitoring the effectiveness of this measures. Key controls include configuring terminals with the latest security updates, strong passwords, and secure boot processes, alongside access restrictions through multi-factor authentication. Data encryption adds an extra layer of security, safeguarding payment card data both at rest and in transit. Vulnerability scans are employed to identify and address potential weaknesses.
+
+PCI DSS complements ISO 27001 by mandating specific controls. Tokenization replaces sensitive data with tokens to prevent fraud cases. Strong encryption practices and secure software usage further fortify the terminals against vulnerabilities. Regular testing, including penetration tests and vulnerability scans, ensures the identification and remediation of security weaknesses, Williams (2010).
+
+## Application of ISO 27001 and PCI DSS in the POS Credit Card Processing Scenario (Fully-Integrated POS Systems)
+
+Fully-integrated POS systems, with their extended functionalities and network connections, demand a comprehensive security approach. ISO 27001 and PCI DSS offer a robust framework for establishing security in this scenario.
+
+Through ISO 27001, company assets are identified , risks are assessed, and controls are applied throughout the system's lifecycle. Key controls include firewalls to filter network traffic, intrusion detection systems to monitor for suspicious activity, and data loss prevention solutions to prevent unauthorized data disclosure.
+
+PCI DSS augments ISO 27001 by mandating specific controls like ensuring secure data storage through encryption and access controls, implementing strong password policies with multi-factor authentication, and providing regular employee training on data security procedures, as detailed in Requirement 7 of the standard (Restrict access to cardholder data by business need to know) and Requirement 9 (Restrict physical access to cardholder data). PCI DSS also requires that an incident response plan be in place is crucial to effectively handle and remediate security breaches in fully-integrated POS systems. This plan should be part of a broader information security strategy, as compliance alone may not be sufficient to protect sensitive data (Tutton, 2010).
+
+## Application of ISO 27001 and PCI DSS in the POS Credit Card Processing Scenario (Mobile Acceptance Solutions)
+
+Mobile acceptance solutions are the latest entrants in the digital payment space. ISO 27001 and PCI DSS also applies to them and help provide a robust framework to address their unique security challenges.
+
+For mobile acceptance solutions, ISO 27001 emphasizes secure coding practices, input validation, and regular vulnerability scans. Device authentication mechanisms, including multi-factor authentication and device fingerprinting, are recommended to verify the legitimacy of mobile devices involved in payment processing. Additionally, ISO 27001 advocates for data encryption, ensuring that sensitive payment card data is encrypted both at rest and in transit using strong algorithms and key management practices.
+
+Complementing ISO 27001, PCI DSS introduces specific security requirements tailored for mobile acceptance solutions. For example, tokenisation is used to substitute sensitive payment card data with tokens that remain unusable for fraudulent transactions, even in the event of device compromise.
+
+Kouser *et al*. (2018) emphasize the importance of strong authentication methods, such as biometric scanning and multi-factor authentication, in ATM transactions. This aligns with the PCI DSS requirement for strong passwords and authentication (Docksey, 2006).
+
+Additionally, PCI DSS ensures that mobile payment transactions occur over encrypted channels like TLS/SSL the importance of which Jarmoc (2012) highlighted in ensuring privacy, integrity, and authenticity in online communications.
+
+The standard also underscores the importance of maintaining up-to-date security through regular updates and patches for mobile acceptance solutions. Employee training on mobile payment security procedures, including the recognition and reporting of suspicious activity, is also a key aspect of PCI DSS's approach.
+
+## Conclusion
+
+By adhering to both ISO 27001 and PCI DSS, businesses can significantly bolster the security of their mobile acceptance solutions. This comprehensive strategy not only safeguards sensitive payment card data but also addresses the specific risks associated with mobile payment transactions, offering a resilient defense for ever-changing mobile POS technologies.
+
+## References
+
+Branden, R.W. (2010) *How tokenization and encryption can enable PCI DSS compliance*, Information Security Technical Report, 15(4), pp 160-165. doi: <https://doi.org/10.1016/j.istr.2011.02.005>
+
+Calder, A., and Geraint, W. (2019) *PCI DSS: A Pocket Guide*. 6th edn, IT Governance Publishing, JSTOR, doi: <https://doi.org/10.2307/j.ctvndv9hz>
+
+Docksey, R. (2006) ‘PCI DSS - closing the loop on 'card not present' fraud’, *IET Conference on Crime and Security*. London, UK, 2006. Institution of Engineering and Technology, pp. 17-37
+
+ISO and IEC (2022) Information technology—Security techniques—Information security management systems—Requirements. ISO 27001:2022 Available from <https://www.isms.online/> iso-27001/annex-a/8-24-use-of-cryptography-2022/ \[accessed 7 Dec 2023\]
+
+Jarmoc, J. (2012) ‘SSL/TLS Interception Proxies and Transitive Trust’ \[*PowerPoint* presentation\]. Black Hat Europe 2012. Available at: <https://scholar.google.com/scholar?hl=en&q=J.+Jarmoc.+SSL%2FTLS+Interception+Proxies+and+Transitive+Trust.+Presentation+at+Black+Hat+Europe+2012.>(Accessed: 9 Dec 2023).
+
+Kouser, F., Nagaratna, P.V.R., Sree, B., and Ravikiran (2018) ‘Highly Secure Multiple Account Bank Affinity Card-A Successor for ATM Card’, *2018 International Conference on Design Innovations for 3Cs Compute Communicate Control (ICDI3C)*. Bangalore, India, 2018. Institute of Electrical and Electronics Engineers, pp. 115-119. doi: <https://doi.org/10.1109/ICDI3C.2018.00033>
+
+Ma, Q., Johnston, A.C., and Pearson, J.M. (2008), Information security management objectives and practices: A parsimonious framework’, Information Management & Computer Security, 16(3), pp. 251-270. doi: <https://doi.org/10.1108/09685220810893207>
+
+Tutton, J. (2010), ‘Incident response and compliance: A case study of the recent attacks’, Information Security Technical Report, 15(4), pp. 145-149. doi: <https://doi.org/10.1016/j.istr.2011.02.001>

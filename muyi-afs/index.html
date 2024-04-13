@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Data Security with Python</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="index_files/libs/clipboard/clipboard.min.js"></script>
+<script src="index_files/libs/quarto-html/quarto.js"></script>
+<script src="index_files/libs/quarto-html/popper.min.js"></script>
+<script src="index_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="index_files/libs/quarto-html/anchor.min.js"></script>
+<link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="index_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="index_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="index_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="index_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="index_files/libs/quarto-diagram/mermaid.min.js"></script>
+<script src="index_files/libs/quarto-diagram/mermaid-init.js"></script>
+<link href="index_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#task-1" id="toc-task-1" class="nav-link active" data-scroll-target="#task-1">Task 1</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation">Implementation</a></li>
+  <li><a href="#code-report" id="toc-code-report" class="nav-link" data-scroll-target="#code-report">Code Report</a></li>
+  </ul></li>
+  <li><a href="#task-2" id="toc-task-2" class="nav-link" data-scroll-target="#task-2">Task 2</a>
+  <ul class="collapse">
+  <li><a href="#introduction-1" id="toc-introduction-1" class="nav-link" data-scroll-target="#introduction-1">Introduction</a></li>
+  <li><a href="#implementation-1" id="toc-implementation-1" class="nav-link" data-scroll-target="#implementation-1">Implementation</a></li>
+  <li><a href="#code-report-1" id="toc-code-report-1" class="nav-link" data-scroll-target="#code-report-1">Code Report</a></li>
+  </ul></li>
+  <li><a href="#task-3" id="toc-task-3" class="nav-link" data-scroll-target="#task-3">Task 3</a>
+  <ul class="collapse">
+  <li><a href="#introduction-2" id="toc-introduction-2" class="nav-link" data-scroll-target="#introduction-2">Introduction</a></li>
+  <li><a href="#implementation-2" id="toc-implementation-2" class="nav-link" data-scroll-target="#implementation-2">Implementation</a></li>
+  <li><a href="#code-report-2" id="toc-code-report-2" class="nav-link" data-scroll-target="#code-report-2">Code Report</a></li>
+  <li><a href="#workflow" id="toc-workflow" class="nav-link" data-scroll-target="#workflow">Workflow</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul></li>
+  <li><a href="#how-can-iso-27001-and-pci-dss-support-the-use-of-data-security-for-modern-it-companies" id="toc-how-can-iso-27001-and-pci-dss-support-the-use-of-data-security-for-modern-it-companies" class="nav-link" data-scroll-target="#how-can-iso-27001-and-pci-dss-support-the-use-of-data-security-for-modern-it-companies">How can ISO 27001 and PCI DSS support the use of data security for modern IT companies?</a>
+  <ul class="collapse">
+  <li><a href="#iso-27001" id="toc-iso-27001" class="nav-link" data-scroll-target="#iso-27001">ISO 27001</a></li>
+  <li><a href="#pci-dss" id="toc-pci-dss" class="nav-link" data-scroll-target="#pci-dss">PCI DSS</a></li>
+  <li><a href="#application-of-iso-27001-and-pci-dss-in-the-pos-credit-card-processing-scenario-standalone-credit-card-terminals" id="toc-application-of-iso-27001-and-pci-dss-in-the-pos-credit-card-processing-scenario-standalone-credit-card-terminals" class="nav-link" data-scroll-target="#application-of-iso-27001-and-pci-dss-in-the-pos-credit-card-processing-scenario-standalone-credit-card-terminals">Application of ISO 27001 and PCI DSS in the POS Credit Card Processing Scenario (Standalone Credit Card Terminals)</a></li>
+  <li><a href="#application-of-iso-27001-and-pci-dss-in-the-pos-credit-card-processing-scenario-fully-integrated-pos-systems" id="toc-application-of-iso-27001-and-pci-dss-in-the-pos-credit-card-processing-scenario-fully-integrated-pos-systems" class="nav-link" data-scroll-target="#application-of-iso-27001-and-pci-dss-in-the-pos-credit-card-processing-scenario-fully-integrated-pos-systems">Application of ISO 27001 and PCI DSS in the POS Credit Card Processing Scenario (Fully-Integrated POS Systems)</a></li>
+  <li><a href="#application-of-iso-27001-and-pci-dss-in-the-pos-credit-card-processing-scenario-mobile-acceptance-solutions" id="toc-application-of-iso-27001-and-pci-dss-in-the-pos-credit-card-processing-scenario-mobile-acceptance-solutions" class="nav-link" data-scroll-target="#application-of-iso-27001-and-pci-dss-in-the-pos-credit-card-processing-scenario-mobile-acceptance-solutions">Application of ISO 27001 and PCI DSS in the POS Credit Card Processing Scenario (Mobile Acceptance Solutions)</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#references-1" id="toc-references-1" class="nav-link" data-scroll-target="#references-1">References</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Data Security with Python</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="task-1" class="level2">
+<h2 class="anchored" data-anchor-id="task-1">Task 1</h2>
+<p>Assuming that a user enters a password e.g.&nbsp;Test1234, apply a password validation for a user input to login. The password should include capital and lowercase letters, a number and 8 to 12 characters. The password should have at least 2 capital or lowercase letters. The password should not include any spaces.</p>
+<section id="introduction" class="level3">
+<h3 class="anchored" data-anchor-id="introduction">Introduction</h3>
+<p>Protecting user data in an online hotel booking system is paramount, and robust password validation is critical to achieve this. By adhering to specific criteria when crafting passwords, users can significantly minimize security vulnerabilities. This includes a mix of uppercase and lowercase letters, at least one number, a defined length range, a requirement for a minimum number of uppercase or lowercase letters, and an exclusion of spaces. In this demonstration, I will implement Python scripts to showcase password validation based on these criteria.</p>
+<blockquote class="blockquote">
+<p>The password must contain capital and lowercase letters, a number and 8 to 12 characters.</p>
+<p>The password should have at least 2 capital or lowercase letters.</p>
+<p>The password should not include any spaces.</p>
+</blockquote>
+</section>
+<section id="implementation" class="level3">
+<h3 class="anchored" data-anchor-id="implementation">Implementation</h3>
+<div id="bdfedecc" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> PasswordValidator:</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, password):</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.password <span class="op">=</span> password</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> validate_password(<span class="va">self</span>):</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> <span class="dv">8</span> <span class="op">&lt;=</span> <span class="bu">len</span>(<span class="va">self</span>.password) <span class="op">&lt;=</span> <span class="dv">12</span>:</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dv">1</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        lowercase_count <span class="op">=</span> <span class="bu">len</span>(re.findall(<span class="vs">r'[a-z]'</span>, <span class="va">self</span>.password))</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        uppercase_count <span class="op">=</span> <span class="bu">len</span>(re.findall(<span class="vs">r'[A-Z]'</span>, <span class="va">self</span>.password))</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> lowercase_count <span class="op">&lt;</span> <span class="dv">1</span> <span class="kw">or</span> uppercase_count <span class="op">&lt;</span> <span class="dv">1</span>:</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dv">2</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> <span class="bu">any</span>(char.isdigit() <span class="cf">for</span> char <span class="kw">in</span> <span class="va">self</span>.password):</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dv">3</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="st">' '</span> <span class="kw">in</span> <span class="va">self</span>.password:</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dv">4</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dv">0</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>user_password <span class="op">=</span> <span class="st">"lloveRice88"</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>validator <span class="op">=</span> PasswordValidator(user_password)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> validator.validate_password() <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Password is valid."</span>)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Password does not meet the criteria."</span>)</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> validator.validate_password() <span class="op">==</span> <span class="dv">1</span>:</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Password must be between 8 and 12 characters long."</span>)</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> validator.validate_password() <span class="op">==</span> <span class="dv">2</span>:</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Password must contain both capital and lowercase letters, and at least 2 letters in general"</span>)</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> validator.validate_password() <span class="op">==</span> <span class="dv">3</span>:</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Password must contain at least 1 number."</span>)</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> validator.validate_password() <span class="op">==</span> <span class="dv">4</span>:</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Password must not contain a space character"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="code-report" class="level3">
+<h3 class="anchored" data-anchor-id="code-report">Code Report</h3>
+<p>This implementation defines a <code>PasswordValidator</code> class, which validates user passwords based on the aforementioned criteria.</p>
+<p><strong>1. Class Definition:</strong></p>
+<p><strong>PasswordValidator Class:</strong></p>
+<ul>
+<li><code>__init__(self, password)</code>: Initialises a PasswordValidator object with a password provided by the user.</li>
+<li><code>validate_password(self)</code>: Validates the password against defined criteria, including length, uppercase/lowercase letters, numeric digits, and the absence of spaces.</li>
+</ul>
+<p><strong>2. Password Validation:</strong></p>
+<p><strong>Length Check:</strong></p>
+<div id="aa4c2830" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a> <span class="cf">if</span> <span class="kw">not</span> <span class="dv">8</span> <span class="op">&lt;=</span> <span class="bu">len</span>(<span class="va">self</span>.password) <span class="op">&lt;=</span> <span class="dv">12</span>:</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">1</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This code snippet checks if the password length is between 8 and 12 characters.</p>
+<p><strong>Letter Count Check:</strong></p>
+<div id="804230cb" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a> lowercase_count <span class="op">=</span> <span class="bu">len</span>(re.findall(<span class="vs">r'[a-z]'</span>, <span class="va">self</span>.password))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a> uppercase_count <span class="op">=</span> <span class="bu">len</span>(re.findall(<span class="vs">r'[A-Z]'</span>, <span class="va">self</span>.password))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a> <span class="cf">if</span> lowercase_count <span class="op">&lt;</span> <span class="dv">1</span> <span class="kw">or</span> uppercase_count <span class="op">&lt;</span> <span class="dv">1</span>:</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>     <span class="cf">return</span> <span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This lines checks that there are both uppercase and lowercase letters in the password, and at least 2 letters in the password in general.</p>
+<p><strong>Number Check:</strong></p>
+<div id="e66b3700" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">not</span> <span class="bu">any</span>(char.isdigit() <span class="cf">for</span> char <span class="kw">in</span> <span class="va">self</span>.password):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This snippet checks that the password contains at least one number.</p>
+<p><strong>Space Check:</strong></p>
+<div id="afb48f2a" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a> <span class="cf">if</span> <span class="st">' '</span> <span class="kw">in</span> <span class="va">self</span>.password:</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>     <span class="cf">return</span> <span class="dv">4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>These line ensures there are no spaces in the password.</p>
+<p><strong>3. Code Demonstration:</strong></p>
+<p><strong>Password Initialization:</strong> - An instance of the <code>PasswordValidator</code> class (<code>validator</code>) is created with the example password “IloveRice88” at line 27 of the code.</p>
+<p><strong>Validation Check:</strong> - Lines 30 downward demonstrates the validation of the password, using the output of the <code>validate_password()</code> method to print appropriate error messages.</p>
+<p><strong>4. Security Considerations:</strong></p>
+<ul>
+<li><p>The code enforces various password complexity requirements to enhance security.</p></li>
+<li><p>Regular expressions are utilized for efficient pattern matching.</p></li>
+</ul>
+<p><strong>5. Recommendations:</strong></p>
+<ul>
+<li><p>Provide informative error messages specifying which criteria the password fails to meet.</p></li>
+<li><p>Implement additional checks for special characters or other specific requirements.</p></li>
+</ul>
+</section>
+</section>
+<section id="task-2" class="level2">
+<h2 class="anchored" data-anchor-id="task-2">Task 2</h2>
+<p>Assuming that a user enters a username e.g.&nbsp;admin and a password Test1234, apply a password encryption and decryption strategy.</p>
+<ul>
+<li><p>Demonstrate an encryption-decryption use case for user name and password.</p></li>
+<li><p>Demonstrate an example of successful and unsuccessful login using any data input that you prefer.</p></li>
+</ul>
+<section id="introduction-1" class="level3">
+<h3 class="anchored" data-anchor-id="introduction-1">Introduction</h3>
+<p>The solution shows how Python can be used to implement secured user authentication through password encryption and verification using the <strong>bcrypt</strong> library (Manoj, 2023). The script defines a <code>User</code> class that encapsulates user information, including the username and a securely hashed password. This design choice prioritizes data security, as sensitive user credentials are protected against common vulnerabilities.</p>
+</section>
+<section id="implementation-1" class="level3">
+<h3 class="anchored" data-anchor-id="implementation-1">Implementation</h3>
+<div id="ad2be296" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> bcrypt</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> User:</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, username, password):</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.username <span class="op">=</span> username</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.password <span class="op">=</span> <span class="va">self</span>.encrypt_password(password)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> encrypt_password(<span class="va">self</span>, password):</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        hashed_password <span class="op">=</span> bcrypt.hashpw(</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>            password.encode(<span class="st">'utf-8'</span>), bcrypt.gensalt())</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> hashed_password</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> check_password(<span class="va">self</span>, input_password):</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> bcrypt.checkpw(input_password.encode(<span class="st">'utf-8'</span>), <span class="va">self</span>.password)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co"># User registration</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>user <span class="op">=</span> User(<span class="st">"Biden"</span>, <span class="st">"Ilovepotatoes88"</span>)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Successful login attempt</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>input_password_success <span class="op">=</span> <span class="st">"Ilovepotatoes88"</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> user.check_password(input_password_success):</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Login successful!"</span>)</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Login failed."</span>)</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Unsuccessful login attempt</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>input_password_fail <span class="op">=</span> <span class="st">"notmypassword"</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> user.check_password(input_password_fail):</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Login successful!"</span>)</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Login failed."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="code-report-1" class="level3">
+<h3 class="anchored" data-anchor-id="code-report-1">Code Report</h3>
+<p>The provided code demonstrates a simple implementation of password encryption and user authentication using the <code>bcrypt</code> library in Python. Below is a detailed report on the code:</p>
+<p><strong>1. Class Definition:</strong></p>
+<p><strong>User Class:</strong></p>
+<p><code>__init__(self, username, password)</code>: This Initializes a <code>User</code> object with a username and encrypted password using the <code>encrypt_password</code> method.</p>
+<p><code>encrypt_password(self, password)</code>: Hashes the given password using the <strong>bcrypt</strong> library.</p>
+<p><code>check_password(self, input_password)</code>: Compares the input password with the stored hashed password for authentication.</p>
+<p><strong>2. Example Usage:</strong></p>
+<p><strong>User Registration:</strong> An instance of the <code>User</code> class (<code>user</code>) is created with the username “Biden” and the password “Ilovepotatoes88”. The password is automatically encrypted during initialization.</p>
+<div id="f079cae8" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>user <span class="op">=</span> User(<span class="st">"Biden"</span>,  <span class="st">"Ilovepotatoes88"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><p><strong>Successful Login:</strong></p>
+<ul>
+<li>Demonstrates a successful login attempt using the correct password (“Ilovepotatoes88”).</li>
+</ul>
+<div id="08f04499" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>input_password_success <span class="op">=</span> <span class="st">"Ilovepotatoes88"</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> user.check_password(input_password_success):</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Login successful!"</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Login failed."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+<li><p><strong>Unsuccessful Login:</strong></p>
+<ul>
+<li>Demonstrates an unsuccessful login attempt using an incorrect password (“notmypassword”). In this case, the <code>else</code> branch of the conditional logic will activate and the login will fail</li>
+</ul>
+<div id="98123c3d" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>input_password_fail <span class="op">=</span> <span class="st">"notmypassword"</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> user.check_password(input_password_fail):</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Login successful!"</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Login failed."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+</ul>
+<p><strong>3. Security Considerations:</strong></p>
+<ul>
+<li><p>The code enhances security by storing and comparing hashed passwords using <strong>bcrypt</strong>, a strong cryptographic hashing algorithm.</p></li>
+<li><p>The use of <strong>bcrypt</strong> and salting mitigates common password vulnerabilities.</p></li>
+</ul>
+<p><strong>4. Recommendations:</strong></p>
+<ul>
+<li><p>Proper handling of exceptions related to <strong>bcrypt</strong> operations, such as <code>ValueError</code> for improperly formatted passwords can be ensured.</p></li>
+<li><p>The use of strong, unique passwords should be ensured by implementing password policies.</p></li>
+<li><p>A user registration system with proper validation of usernames and additional user information should be implemented.</p></li>
+<li><p>Error handling can be expanded for other scenarios, such as non-existent users or database connectivity issues.</p></li>
+</ul>
+</section>
+</section>
+<section id="task-3" class="level2">
+<h2 class="anchored" data-anchor-id="task-3">Task 3</h2>
+<p>Implement a multifactor authentication case using Python.</p>
+<p>Demonstrate the use of a multifactor authentication case in Python. For this example you will need to change the period interval to 25 seconds.</p>
+<p>Generate the following set of events in Python:</p>
+<ol type="1">
+<li><p>Simulate a new one time pin.</p></li>
+<li><p>Then verify the user.</p></li>
+<li><p>Then wait for 30 seconds</p></li>
+<li><p>Then verify once more.</p></li>
+</ol>
+<section id="introduction-2" class="level3">
+<h3 class="anchored" data-anchor-id="introduction-2">Introduction</h3>
+<p>For the online hotel booking system, implementing multifactor authentication (MFA) using Python with the PyOTP library enhances the security of user accounts. In this design, I will simulate a scenario where a user generates a one-time PIN (OTP), verifies the user with the generated OTP, waits for a specified interval, and then verifies the user once more.</p>
+</section>
+<section id="implementation-2" class="level3">
+<h3 class="anchored" data-anchor-id="implementation-2">Implementation</h3>
+<div id="ce78e8b3" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyotp</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> HotelBookingSystem:</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, user_secret_key):</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.user_secret_key <span class="op">=</span> user_secret_key</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.otp_generator <span class="op">=</span> pyotp.TOTP(<span class="va">self</span>.user_secret_key, interval<span class="op">=</span><span class="dv">25</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> generate_otp(<span class="va">self</span>):</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.otp_generator.now()</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> verify_user(<span class="va">self</span>, user_input_otp):</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.otp_generator.verify(user_input_otp)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>user_secret_key <span class="op">=</span> pyotp.random_base32()</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>hotel_system <span class="op">=</span> HotelBookingSystem(user_secret_key)</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate a one-time PIN</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>generated_otp <span class="op">=</span> hotel_system.generate_otp()</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Generated OTP: </span><span class="sc">{</span>generated_otp<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify the user</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>user_input_otp <span class="op">=</span> <span class="bu">input</span>(<span class="st">"Enter your OTP for verification: "</span>)</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> hotel_system.verify_user(user_input_otp):</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"User verified successfully."</span>)</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"User verification failed."</span>)</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Wait for 30 seconds</span></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>time.sleep(<span class="dv">30</span>)</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Verifying again</span></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> hotel_system.verify_user(user_input_otp):</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"User verified successfully after waiting."</span>)</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"User verification failed after waiting."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="code-report-2" class="level3">
+<h3 class="anchored" data-anchor-id="code-report-2">Code Report</h3>
+<p>The above code exemplifies a Python implementation of multifactor authentication using the PyOTP library within the context of an online hotel booking system. Here is a detailed report on the code:</p>
+<p><strong>1. Class Definition:</strong></p>
+<p><strong>HotelBookingSystem Class:</strong></p>
+<ul>
+<li><p><code>__init__(self, user_secret_key)</code>: This Initialises a <code>HotelBookingSystem</code> python object with a user’s secret key and a TOTP generator with a 25-second interval, the <strong>timestep</strong>, that is, the amount of time duration for which the OTP is valid (Khrishna, 2023).</p></li>
+<li><p><code>generate_otp(self)</code>: This method generates a new one-time PIN (OTP) using the TOTP generator.</p></li>
+<li><p><code>verify_user(self, user_input_otp)</code>: Verifies the user-entered OTP using the TOTP generator.</p></li>
+</ul>
+<p><strong>2. Security Aspects:</strong></p>
+<ul>
+<li><p>The code utilizes PyOTP, a secure, well-used library implementing Time-based One-Time Passwords (TOTP).</p></li>
+<li><p>A user’s secret key is kept private for secure generation and verification of OTPs.</p></li>
+</ul>
+<p><strong>3. Example Usage:</strong></p>
+<p>A random secret key is generated for a user, and a <code>HotelBookingSystem</code> instance is created.</p>
+<p>Simulates the generation of a new OTP, verifies the user, waits for 30 seconds, and verifies the user again.</p>
+<p><strong>4. Multifactor Authentication Workflow:</strong></p>
+<p><strong>OTP Generation:</strong></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>user_secret_key <span class="op">=</span> pyotp.random_base32()</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>hotel_system <span class="op">=</span> HotelBookingSystem(user_secret_key)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>generated_otp <span class="op">=</span> hotel_system.generate_otp()</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Generated OTP: </span><span class="sc">{</span>generated_otp<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Lines 17 to 22 demonstrates the generation of a new OTP for the user.</p>
+<ul>
+<li><p><strong>User Verification:</strong></p>
+<ul>
+<li>The code prompts the user to enter the OTP for verification and provides feedback on the success or failure of the verification.</li>
+</ul>
+<div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>user_input_otp <span class="op">=</span> <span class="bu">input</span>(<span class="st">"Enter your OTP for verification: "</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> hotel_system.verify_user(user_input_otp):</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"User verified successfully."</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"User verification failed."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p><strong>Wait for 30 Seconds:</strong></p>
+<ul>
+<li>The script pauses for 30 seconds using the <strong>time</strong> native Python package to simulate the passage of time.</li>
+</ul>
+<div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>time.sleep(<span class="dv">30</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p><strong>User Verification After Waiting:</strong></p>
+<ul>
+<li>Finally, the code prompts the user to enter their OTP again for verification after the waiting period.</li>
+</ul>
+<div class="sourceCode" id="cb14"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>user_input_otp_after_wait <span class="op">=</span> <span class="bu">input</span>(<span class="st">"Enter the OTP to verify the user again: "</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> hotel_system.verify_user(user_input_otp_after_wait):</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"User verified successfully after waiting."</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"User verification failed after waiting."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+</ul>
+<p>Because the wait period (30 seconds) is longer than the <u><strong>timestep</strong></u> (25 seconds), the OTP becomes expired and the user verification will fail.</p>
+<p><strong>5. Recommendations:</strong></p>
+<p>Error handling could be implemented for potential issues during OTP generation or user verification.</p>
+</section>
+<section id="workflow" class="level3">
+<h3 class="anchored" data-anchor-id="workflow">Workflow</h3>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="references" class="level3">
+<h3 class="anchored" data-anchor-id="references">References</h3>
+<p>Manoj, D. (2023) Bcrypt: <em>Safeguarding Users’ Passwords in Python</em>. Available at: <a href="https://medium.com/@HeCanThink/bcrypt-safeguarding-users-passwords-in-python-fd8400bdd03">https://medium.com/@HeCanThink/bcrypt-safeguarding-users-passwords-in-python-fd8400bdd03</a> (Accessed: 8 Dec 2023).</p>
+<p>Krishna, A. (2023) <em>How To Generate OTPs Using PyOTP in Python</em>. Available at: <a href="https://blog.ashutoshkrris.in/how-to-generate-otps-using-pyotp-in-python" class="uri">https://blog.ashutoshkrris.in/how-to-generate-otps-using-pyotp-in-python</a> (Accessed: 8 Dec 2023)</p>
+</section>
+</section>
+<section id="how-can-iso-27001-and-pci-dss-support-the-use-of-data-security-for-modern-it-companies" class="level1">
+<h1>How can ISO 27001 and PCI DSS support the use of data security for modern IT companies?</h1>
+<section id="iso-27001" class="level2">
+<h2 class="anchored" data-anchor-id="iso-27001">ISO 27001</h2>
+<p>ISO 27001, the premier international standard for information security, is a comprehensive framework published by the International Organization for Standardization (ISO) in collaboration with the International Electrotechnical Commission (IEC). Officially titled “ISO/IEC 27001 – Information security, cybersecurity, and privacy protection — Information security management systems — Requirements,” it serves as a guide for companies seeking to safeguard their critical information. The standard also offers a certification process to qualified organisations. Achieving ISO 27001 certification enables a company to demonstrate to customers and partners that it is dedicated to ensuring the security of their data (ISO and IEC, 2022).</p>
+<p>According to Ma <em>et al</em>. (2008), the fundamental objective of an Information Security Management System (ISMS) is to safeguard three vital aspects of information: confidentiality, integrity, and availability. The standard involves identifying risks through risk assessment and subsequently defining measures for risk mitigation or treatment. The primary focus is on managing risks systematically—locating vulnerabilities and implementing security controls or safeguards to prevent incidents. The implementation of ISO 27001 involves adhering to a set of controls detailed in annexes within the standard.</p>
+</section>
+<section id="pci-dss" class="level2">
+<h2 class="anchored" data-anchor-id="pci-dss">PCI DSS</h2>
+<p>PCI DSS, or the Payment Card Industry Data Security Standard, is a set of security standards specifically designed for organizations engaged in payment card transactions. Formulated through collaboration among major credit card companies, PCI DSS aims to establish a foundational set of security requirements for the protection of cardholder data. PCI DSS comprises twelve high-level requirements addressing network security, access control, and regular monitoring and it is applicable to entities involved in storing, processing, or transmitting credit card information. The standard places a strong emphasis on securing payment transactions and preventing unauthorized access or breaches of cardholder data (Calder and Geraint, 2013). Notably, PCI DSS advocates for measures like point-to-point encryption to ensure integrity and confidentiality of sensitive financial information.</p>
+</section>
+<section id="application-of-iso-27001-and-pci-dss-in-the-pos-credit-card-processing-scenario-standalone-credit-card-terminals" class="level2">
+<h2 class="anchored" data-anchor-id="application-of-iso-27001-and-pci-dss-in-the-pos-credit-card-processing-scenario-standalone-credit-card-terminals">Application of ISO 27001 and PCI DSS in the POS Credit Card Processing Scenario (Standalone Credit Card Terminals)</h2>
+<p>Standalone credit card terminals are a staple of modern retail transactions. However, they present a potential security risk to payment card data and hence necessitate effective protective measures. ISO 27001 and PCI DSS offer robust solutions to address these concerns, ensuring the security of payment card data in such environments.</p>
+<p>ISO 27001 promotes regular risk assessments, implementation of security controls, and monitoring the effectiveness of this measures. Key controls include configuring terminals with the latest security updates, strong passwords, and secure boot processes, alongside access restrictions through multi-factor authentication. Data encryption adds an extra layer of security, safeguarding payment card data both at rest and in transit. Vulnerability scans are employed to identify and address potential weaknesses.</p>
+<p>PCI DSS complements ISO 27001 by mandating specific controls. Tokenization replaces sensitive data with tokens to prevent fraud cases. Strong encryption practices and secure software usage further fortify the terminals against vulnerabilities. Regular testing, including penetration tests and vulnerability scans, ensures the identification and remediation of security weaknesses, Williams (2010).</p>
+</section>
+<section id="application-of-iso-27001-and-pci-dss-in-the-pos-credit-card-processing-scenario-fully-integrated-pos-systems" class="level2">
+<h2 class="anchored" data-anchor-id="application-of-iso-27001-and-pci-dss-in-the-pos-credit-card-processing-scenario-fully-integrated-pos-systems">Application of ISO 27001 and PCI DSS in the POS Credit Card Processing Scenario (Fully-Integrated POS Systems)</h2>
+<p>Fully-integrated POS systems, with their extended functionalities and network connections, demand a comprehensive security approach. ISO 27001 and PCI DSS offer a robust framework for establishing security in this scenario.</p>
+<p>Through ISO 27001, company assets are identified , risks are assessed, and controls are applied throughout the system’s lifecycle. Key controls include firewalls to filter network traffic, intrusion detection systems to monitor for suspicious activity, and data loss prevention solutions to prevent unauthorized data disclosure.</p>
+<p>PCI DSS augments ISO 27001 by mandating specific controls like ensuring secure data storage through encryption and access controls, implementing strong password policies with multi-factor authentication, and providing regular employee training on data security procedures, as detailed in Requirement 7 of the standard (Restrict access to cardholder data by business need to know) and Requirement 9 (Restrict physical access to cardholder data). PCI DSS also requires that an incident response plan be in place is crucial to effectively handle and remediate security breaches in fully-integrated POS systems. This plan should be part of a broader information security strategy, as compliance alone may not be sufficient to protect sensitive data (Tutton, 2010).</p>
+</section>
+<section id="application-of-iso-27001-and-pci-dss-in-the-pos-credit-card-processing-scenario-mobile-acceptance-solutions" class="level2">
+<h2 class="anchored" data-anchor-id="application-of-iso-27001-and-pci-dss-in-the-pos-credit-card-processing-scenario-mobile-acceptance-solutions">Application of ISO 27001 and PCI DSS in the POS Credit Card Processing Scenario (Mobile Acceptance Solutions)</h2>
+<p>Mobile acceptance solutions are the latest entrants in the digital payment space. ISO 27001 and PCI DSS also applies to them and help provide a robust framework to address their unique security challenges.</p>
+<p>For mobile acceptance solutions, ISO 27001 emphasizes secure coding practices, input validation, and regular vulnerability scans. Device authentication mechanisms, including multi-factor authentication and device fingerprinting, are recommended to verify the legitimacy of mobile devices involved in payment processing. Additionally, ISO 27001 advocates for data encryption, ensuring that sensitive payment card data is encrypted both at rest and in transit using strong algorithms and key management practices.</p>
+<p>Complementing ISO 27001, PCI DSS introduces specific security requirements tailored for mobile acceptance solutions. For example, tokenisation is used to substitute sensitive payment card data with tokens that remain unusable for fraudulent transactions, even in the event of device compromise.</p>
+<p>Kouser <em>et al</em>. (2018) emphasize the importance of strong authentication methods, such as biometric scanning and multi-factor authentication, in ATM transactions. This aligns with the PCI DSS requirement for strong passwords and authentication (Docksey, 2006).</p>
+<p>Additionally, PCI DSS ensures that mobile payment transactions occur over encrypted channels like TLS/SSL the importance of which Jarmoc (2012) highlighted in ensuring privacy, integrity, and authenticity in online communications.</p>
+<p>The standard also underscores the importance of maintaining up-to-date security through regular updates and patches for mobile acceptance solutions. Employee training on mobile payment security procedures, including the recognition and reporting of suspicious activity, is also a key aspect of PCI DSS’s approach.</p>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>By adhering to both ISO 27001 and PCI DSS, businesses can significantly bolster the security of their mobile acceptance solutions. This comprehensive strategy not only safeguards sensitive payment card data but also addresses the specific risks associated with mobile payment transactions, offering a resilient defense for ever-changing mobile POS technologies.</p>
+</section>
+<section id="references-1" class="level2">
+<h2 class="anchored" data-anchor-id="references-1">References</h2>
+<p>Branden, R.W. (2010) <em>How tokenization and encryption can enable PCI DSS compliance</em>, Information Security Technical Report, 15(4), pp 160-165. doi: <a href="https://doi.org/10.1016/j.istr.2011.02.005" class="uri">https://doi.org/10.1016/j.istr.2011.02.005</a></p>
+<p>Calder, A., and Geraint, W. (2019) <em>PCI DSS: A Pocket Guide</em>. 6th edn, IT Governance Publishing, JSTOR, doi: <a href="https://doi.org/10.2307/j.ctvndv9hz" class="uri">https://doi.org/10.2307/j.ctvndv9hz</a></p>
+<p>Docksey, R. (2006) ‘PCI DSS - closing the loop on ’card not present’ fraud’, <em>IET Conference on Crime and Security</em>. London, UK, 2006. Institution of Engineering and Technology, pp.&nbsp;17-37</p>
+<p>ISO and IEC (2022) Information technology—Security techniques—Information security management systems—Requirements. ISO 27001:2022 Available from <a href="https://www.isms.online/" class="uri">https://www.isms.online/</a> iso-27001/annex-a/8-24-use-of-cryptography-2022/ [accessed 7 Dec 2023]</p>
+<p>Jarmoc, J. (2012) ‘SSL/TLS Interception Proxies and Transitive Trust’ [<em>PowerPoint</em> presentation]. Black Hat Europe 2012. Available at: <a href="https://scholar.google.com/scholar?hl=en&amp;q=J.+Jarmoc.+SSL%2FTLS+Interception+Proxies+and+Transitive+Trust.+Presentation+at+Black+Hat+Europe+2012." class="uri">https://scholar.google.com/scholar?hl=en&amp;q=J.+Jarmoc.+SSL%2FTLS+Interception+Proxies+and+Transitive+Trust.+Presentation+at+Black+Hat+Europe+2012.</a>(Accessed: 9 Dec 2023).</p>
+<p>Kouser, F., Nagaratna, P.V.R., Sree, B., and Ravikiran (2018) ‘Highly Secure Multiple Account Bank Affinity Card-A Successor for ATM Card’, <em>2018 International Conference on Design Innovations for 3Cs Compute Communicate Control (ICDI3C)</em>. Bangalore, India, 2018. Institute of Electrical and Electronics Engineers, pp.&nbsp;115-119. doi: <a href="https://doi.org/10.1109/ICDI3C.2018.00033" class="uri">https://doi.org/10.1109/ICDI3C.2018.00033</a></p>
+<p>Ma, Q., Johnston, A.C., and Pearson, J.M. (2008), Information security management objectives and practices: A parsimonious framework’, Information Management &amp; Computer Security, 16(3), pp.&nbsp;251-270. doi: <a href="https://doi.org/10.1108/09685220810893207" class="uri">https://doi.org/10.1108/09685220810893207</a></p>
+<p>Tutton, J. (2010), ‘Incident response and compliance: A case study of the recent attacks’, Information Security Technical Report, 15(4), pp.&nbsp;145-149. doi: <a href="https://doi.org/10.1016/j.istr.2011.02.001" class="uri">https://doi.org/10.1016/j.istr.2011.02.001</a></p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
