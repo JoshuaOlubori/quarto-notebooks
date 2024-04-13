@@ -11,7 +11,8 @@ toc: true
 
 This report describes the development and impact of a data-driven loan application processing system at Apex Financial Services (AFS). Due to a successful digital marketing effort, the number of loan applications has been steadily rising, which has put pressure on the present manual approval procedure. By using data analytics to partially automate loan processing, this initiative seeks to address these issues and free up the loan team's valuable time for individualised client engagement.
 
-### 
+### Link to Python Notebook
+[click here](https://colab.research.google.com/drive/1w2mjR42x3O1qv3BCjpvTvp35d2QORhUx?usp=sharing)
 
 ### Data Source and Suitability
 
@@ -40,6 +41,8 @@ This section outlines the approach for analyzing a loan dataset to gain insights
 The approach follows the CRISP-DM (Cross-Industry Standard Process for Data Mining) framework:
 
 ![Figure 1: CRISP-DM Framework (Tounsi et al. ,2020)](images/CRISP-DM-data-mining-framework.png){fig-align="center"}
+
+The first 3 parts would be explained in the following sections while the latter part of the framework comprise the recommendation section
 
 ### Business Understanding
 
@@ -127,7 +130,7 @@ This section explores key characteristics of the loan dataset using various EDA 
 
 -   **Property Area Distribution:** Applicants were relatively evenly distributed across the three property areas (rural, suburban, semi-urban), with semi-urban dwellers having the greatest representation.
 
-    ![Figure 5: Self-Employment Status](images/employment_status.png)
+    ![Figure 5: Distribution of Applicants Dwellings](images/propery-areas.png)
 
 ### Code Libraries Used and Rationale
 
@@ -148,49 +151,8 @@ This section explores key characteristics of the loan dataset using various EDA 
 ### Code Design and Maintainability
 
 -   **Pseudocode:** Using pseudocode comments within the script can enhance readability and understanding, even for those unfamiliar with Python specifically. Pseudocode outlines the logic and steps involved in the analysis without getting bogged down in language syntax. This allows for easier comprehension and potential translation into other programming languages if needed.
-
-    ```         
-    # Data Ingestion
-    Load Excel file data into DataFrame 'loans_xlsx'
-    Load PDF file data into a list of DataFrames 'loans_df_list'
-    Define a function 'concatenate_pdfs' to handle inconsistent headers in PDF files
-        Process the first DataFrame as-is
-        For the remaining DataFrames:
-            Extract misplaced headers and create a new DataFrame
-            Assign correct headers from the first DataFrame
-            Concatenate with the remaining rows of the original DataFrame
-            Append the corrected DataFrame to the 'processed_dfs' list
-        Concatenate all DataFrames in 'processed_dfs' into a single DataFrame 'loans_pdf'
-    Combine 'loans_xlsx' and 'loans_pdf' into a single DataFrame 'loans'
-
-    # Data Cleaning and Preprocessing
-    Check for and remove duplicate rows in 'loans'
-    Handle missing values in 'loans'
-    Convert categorical variables to their corresponding labels
-    Convert data types to appropriate formats
-
-    # Exploratory Data Analysis (EDA)
-    Define a function 'visualize_outliers' to plot boxplots for numeric columns
-        Create a grid of subplots based on the number of numeric columns
-        Plot each numeric column in a separate subplot
-    Define a function 'plot_categorical_distributions' to plot count plots for categorical columns
-        For each categorical column:
-            Create a subplot and plot the count plot
-    Define a function 'plot_continuous_histograms' to plot histograms for continuous columns
-        For each continuous column:
-            Create a subplot and plot the histogram
-    Perform bivariate analysis using a pairplot
-
-    # Required Analyses
-    Calculate the total amount loaned, average loan amount, and average loan term
-    Analyze the applicant counts by approval status and gender
-    Investigate the gender distribution of approved and rejected loan applicants
-    Identify the maximum and minimum loan amounts and visualize the loan amount distribution
-    Calculate the percentage of self-employed applicants with approved loans
-    Analyze the income distribution of main applicants
-    Identify the top 10 applicants by loan amount
-    Visualize the distribution of property areas for loan applicants
-    ```
+    ![Figure 6: Flowchart showing programming solution](images/flowchart.png)
+    
 
 -   **Version Control (Git):** Utilizing version control systems like Git allows for tracking changes made to the code over time. This facilitates reverting to previous versions if necessary, identifying who made specific changes, and enabling collaboration.
 
@@ -239,3 +201,54 @@ This section explores key characteristics of the loan dataset using various EDA 
 Tounsi, Y., Anoun, H. and Hassouni, L. (2020) 'CSMAS: Improving Multi-Agent Credit Scoring System by Integrating Big Data and the new generation of Gradient Boosting Algorithms', pp. 1-7. doi: 10.1145/3386723.3387851.
 
 Shwartz-Ziv, R. and Armon, A., 2022. Tabular data: Deep learning is not all you need. Information Fusion, 81, pp.84-90.
+
+## Appendices 
+
+## Appendix 1 - Notebook contents
+
+## Appendix 3 - Design Pseudocode
+
+![Design pseudocode](images/flowchart.png)
+
+```
+# Data Ingestion
+Load Excel file data into DataFrame 'loans_xlsx'
+Load PDF file data into a list of DataFrames 'loans_df_list'
+Define a function 'concatenate_pdfs' to handle inconsistent headers in PDF files
+    Process the first DataFrame as-is
+    For the remaining DataFrames:
+        Extract misplaced headers and create a new DataFrame
+        Assign correct headers from the first DataFrame
+        Concatenate with the remaining rows of the original DataFrame
+        Append the corrected DataFrame to the 'processed_dfs' list
+    Concatenate all DataFrames in 'processed_dfs' into a single DataFrame 'loans_pdf'
+Combine 'loans_xlsx' and 'loans_pdf' into a single DataFrame 'loans'
+
+# Data Cleaning and Preprocessing
+Check for and remove duplicate rows in 'loans'
+Handle missing values in 'loans'
+Convert categorical variables to their corresponding labels
+Convert data types to appropriate formats
+
+# Exploratory Data Analysis (EDA)
+Define a function 'visualize_outliers' to plot boxplots for numeric columns
+    Create a grid of subplots based on the number of numeric columns
+    Plot each numeric column in a separate subplot
+Define a function 'plot_categorical_distributions' to plot count plots for categorical columns
+    For each categorical column:
+        Create a subplot and plot the count plot
+Define a function 'plot_continuous_histograms' to plot histograms for continuous columns
+    For each continuous column:
+        Create a subplot and plot the histogram
+Perform bivariate analysis using a pairplot
+
+# Required Analyses
+Calculate the total amount loaned, average loan amount, and average loan term
+Analyze the applicant counts by approval status and gender
+Investigate the gender distribution of approved and rejected loan applicants
+Identify the maximum and minimum loan amounts and visualize the loan amount distribution
+Calculate the percentage of self-employed applicants with approved loans
+Analyze the income distribution of main applicants
+Identify the top 10 applicants by loan amount
+Visualize the distribution of property areas for loan applicants
+```

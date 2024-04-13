@@ -1,0 +1,37 @@
+### installing QUARTO
+
+quarto check
+export QUARTO_VERSION="1.4.551"
+sudo curl -o quarto-linux-amd64.deb -L https://github.com/quarto-dev/quarto-cli/releases/download/v${QUARTO_VERSION}/quarto-${QUARTO_VERSION}-linux-amd64.deb
+   51  sudo apt-get install gdebi-core
+   52  sudo gdebi quarto-linux-amd64.deb
+   53  /usr/local/bin/quarto check
+   54  # update indices
+   55  sudo apt update -qq
+   56  # install two helper packages we need
+   57  sudo apt install --no-install-recommends software-properties-common dirmngr
+   58  # add the signing key (by Michael Rutter) for these repos
+   59  # To verify key, run gpg --show-keys /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc 
+   60  # Fingerprint: E298A3A825C0D65DFD57CBB651716619E084DAB9
+   61  wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | sudo tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc
+   62  # add the R 4.0 repo from CRAN -- adjust 'focal' to 'groovy' or 'bionic' as needed
+   63  sudo add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/"
+   64  sudo apt install --no-install-recommends r-base
+
+## Installing r PACKAGES
+   67  install.packages(c('knitr', 'rmarkdown'))
+   68  install.packages('knitr')
+   69  r
+   70  R
+   71  quarto
+   72  quarto check
+   73  quarto preview muyi-afx/index.qmd
+   74  quarto preview muyi-afs/index.qmd
+
+## RENDERING TO FORMAT
+   76  quarto render muyi-afs/index.qmd --to docx
+   77  history 8
+   78  history 20
+   79  history 30
+   80  history 40
+   81  history 42 > command_history.txt
